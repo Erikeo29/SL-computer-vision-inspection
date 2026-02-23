@@ -1,0 +1,24 @@
+app:
+  name: "AI Visual Inspection"
+  version: "1.0.0"
+
+model:
+  default: "yolov8n.pt"
+  custom: "models/pcb_defects.pt"
+  confidence_threshold: 0.5
+  iou_threshold: 0.45
+
+defect_categories:
+  - solder_void
+  - missing_component
+  - contamination
+  - dimensional_deviation
+  - bent_pin
+  - foreign_material
+  - scratch
+  - misalignment
+
+inspection:
+  max_images_per_session: 100
+  auto_save_results: true
+  log_path: "data/inspection_log.csv"
