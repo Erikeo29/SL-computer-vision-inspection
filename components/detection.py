@@ -75,7 +75,11 @@ def render_detection_results(
         status = "PASS"
     else:
         nb = len(detections)
-        st.error(t("defects_found").format(count=nb))
+        has_critical = any(d.get("severity") == "critical" for d in formatted)
+        if has_critical:
+            st.error(t("defects_found").format(count=nb) + " ⚠ " + t("severity_critical"))
+        else:
+            st.warning(t("defects_found").format(count=nb) + " — " + t("severity_minor"))
         status = "FAIL"
 
     # Image annotee
@@ -96,7 +100,7 @@ def render_detection_results(
                     {
                         t("class_label"): d["category_display"],
                         t("confidence"): f"{d['confidence']:.1%}",
-                        t("bbox"): str(d["bbox"]),
+                        t("status"): t("severity_critical") if d.get("severity") == "critical" else t("severity_minor"),
                     }
                     for d in formatted
                 ]

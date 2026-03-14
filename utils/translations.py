@@ -100,15 +100,16 @@ TRANSLATIONS: dict[str, dict[str, str | list[str]]] = {
         "date_range": "Periode",
         # --- Guide page ---
         "guide_title": "Guide d'utilisation",
-        # --- Defect categories ---
-        "defect_solder_void": "Vide de brasure",
-        "defect_missing_component": "Composant manquant",
-        "defect_contamination": "Contamination",
-        "defect_dimensional_deviation": "Ecart dimensionnel",
-        "defect_bent_pin": "Broche pliee",
-        "defect_foreign_material": "Corps etranger",
-        "defect_scratch": "Rayure",
-        "defect_misalignment": "Desalignement",
+        # --- Defect categories (DeepPCB) ---
+        "defect_open": "Circuit ouvert",
+        "defect_short": "Court-circuit",
+        "defect_mousebite": "Grignotage",
+        "defect_spur": "Excroissance",
+        "defect_spurious_copper": "Cuivre parasite",
+        "defect_pin_hole": "Trou / void",
+        # --- Severity ---
+        "severity_critical": "CRITIQUE",
+        "severity_minor": "MINEUR",
     },
     "en": {
         # --- Sidebar ---
@@ -208,28 +209,27 @@ TRANSLATIONS: dict[str, dict[str, str | list[str]]] = {
         "date_range": "Date range",
         # --- Guide page ---
         "guide_title": "User guide",
-        # --- Defect categories ---
-        "defect_solder_void": "Solder void",
-        "defect_missing_component": "Missing component",
-        "defect_contamination": "Contamination",
-        "defect_dimensional_deviation": "Dimensional deviation",
-        "defect_bent_pin": "Bent pin",
-        "defect_foreign_material": "Foreign material",
-        "defect_scratch": "Scratch",
-        "defect_misalignment": "Misalignment",
+        # --- Defect categories (DeepPCB) ---
+        "defect_open": "Open circuit",
+        "defect_short": "Short circuit",
+        "defect_mousebite": "Mouse bite",
+        "defect_spur": "Spur",
+        "defect_spurious_copper": "Spurious copper",
+        "defect_pin_hole": "Pin hole / void",
+        # --- Severity ---
+        "severity_critical": "CRITICAL",
+        "severity_minor": "MINOR",
     },
 }
 
 # Mapping defect category keys to translation keys
 DEFECT_CATEGORY_KEYS: dict[str, str] = {
-    "solder_void": "defect_solder_void",
-    "missing_component": "defect_missing_component",
-    "contamination": "defect_contamination",
-    "dimensional_deviation": "defect_dimensional_deviation",
-    "bent_pin": "defect_bent_pin",
-    "foreign_material": "defect_foreign_material",
-    "scratch": "defect_scratch",
-    "misalignment": "defect_misalignment",
+    "open": "defect_open",
+    "short": "defect_short",
+    "mousebite": "defect_mousebite",
+    "spur": "defect_spur",
+    "spurious_copper": "defect_spurious_copper",
+    "pin_hole": "defect_pin_hole",
 }
 
 

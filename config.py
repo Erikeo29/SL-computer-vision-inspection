@@ -14,8 +14,8 @@ SAMPLE_IMAGES_PATH = os.path.join(DATA_PATH, "sample_images")
 LOG_PATH = os.path.join(DATA_PATH, "inspection_log.csv")
 
 # --- Version ---
-VERSION = "1.0.0"
-VERSION_DATE = "Feb 2026"
+VERSION = "2.0.0"
+VERSION_DATE = "Mar 2026"
 
 
 def load_app_config() -> dict:

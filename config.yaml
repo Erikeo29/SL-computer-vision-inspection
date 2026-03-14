@@ -21,19 +21,17 @@ app:
 
 model:
   default: "yolov8n.pt"
-  custom: "models/pcb_defects.pt"
-  confidence_threshold: 0.5
+  custom: "models/pcb_defects_yolov8n_best.pt"
+  confidence_threshold: 0.3
   iou_threshold: 0.45
 
 defect_categories:
-  - solder_void
-  - missing_component
-  - contamination
-  - dimensional_deviation
-  - bent_pin
-  - foreign_material
-  - scratch
-  - misalignment
+  - open
+  - short
+  - mousebite
+  - spur
+  - spurious_copper
+  - pin_hole
 
 inspection:
   max_images_per_session: 100

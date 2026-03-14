@@ -1,4 +1,13 @@
-"""Post-traitement et classification des detections YOLO."""
+"""Post-traitement et classification des detections YOLO.
+
+Classes de defauts PCB (DeepPCB dataset) :
+    0: open            — Circuit ouvert (coupure de piste)
+    1: short           — Court-circuit (pont entre pistes)
+    2: mousebite       — Grignotage (irregularite de bord)
+    3: spur            — Excroissance metallique
+    4: spurious_copper — Cuivre parasite (residu)
+    5: pin_hole        — Trou/void dans le cuivre
+"""
 from __future__ import annotations
 
 import cv2
@@ -7,26 +16,36 @@ import numpy as np
 from utils.translations import t_defect
 
 
+# Classes du modele (ordre identique au training YOLO)
+CLASS_NAMES: list[str] = [
+    "open",
+    "short",
+    "mousebite",
+    "spur",
+    "spurious_copper",
+    "pin_hole",
+]
+
+# Defauts critiques (declenchent un FAIL immediat)
+CRITICAL_DEFECTS: set[str] = {"open", "short"}
+
 # Couleurs BGR pour chaque categorie de defaut
 DEFECT_COLORS: dict[str, tuple[int, int, int]] = {
-    "solder_void": (0, 0, 220),
-    "missing_component": (0, 100, 255),
-    "contamination": (0, 180, 0),
-    "dimensional_deviation": (255, 150, 0),
-    "bent_pin": (200, 0, 200),
-    "foreign_material": (0, 200, 200),
-    "scratch": (128, 0, 128),
-    "misalignment": (255, 0, 100),
+    "open": (0, 0, 220),            # rouge
+    "short": (220, 50, 0),          # bleu
+    "mousebite": (0, 180, 0),       # vert
+    "spur": (0, 165, 255),          # orange
+    "spurious_copper": (200, 0, 200),  # violet
+    "pin_hole": (200, 200, 0),      # cyan
 }
 
-# Couleur par defaut si la categorie n'est pas reconnue
 DEFAULT_COLOR: tuple[int, int, int] = (0, 165, 255)
 
 
 def run_inference(
     model,
     image: np.ndarray,
-    confidence: float = 0.5,
+    confidence: float = 0.3,
     iou: float = 0.45,
 ) -> list[dict]:
     """Execute l'inference YOLO sur une image.
@@ -50,6 +69,7 @@ def run_inference(
         - class_name (str)
         - confidence (float)
         - bbox (list[int]) : [x1, y1, x2, y2]
+        - severity (str) : "critical" ou "minor"
     """
     results = model.predict(
         source=image,
@@ -74,54 +94,17 @@ def run_inference(
         conf = float(box.conf[0].item())
         xyxy = box.xyxy[0].cpu().numpy().astype(int).tolist()
 
+        severity = "critical" if cls_name in CRITICAL_DEFECTS else "minor"
+
         detections.append({
             "class_id": cls_id,
             "class_name": cls_name,
             "confidence": round(conf, 3),
             "bbox": xyxy,
+            "severity": severity,
         })
 
     return detections
-
-
-def map_coco_to_defect(class_name: str) -> str:
-    """Associe une classe COCO a une categorie de defaut (mode demo).
-
-    En mode demonstration (modele pretraine COCO), les classes
-    detectees sont mappees de maniere illustrative vers des
-    categories de defauts PCB.
-
-    Parameters
-    ----------
-    class_name : str
-        Nom de la classe COCO detectee.
-
-    Returns
-    -------
-    str
-        Categorie de defaut mappee.
-    """
-    mapping: dict[str, str] = {
-        "person": "foreign_material",
-        "bicycle": "misalignment",
-        "car": "dimensional_deviation",
-        "motorcycle": "bent_pin",
-        "airplane": "missing_component",
-        "bus": "solder_void",
-        "train": "contamination",
-        "truck": "scratch",
-        "boat": "foreign_material",
-        "cell phone": "missing_component",
-        "laptop": "solder_void",
-        "mouse": "bent_pin",
-        "keyboard": "contamination",
-        "remote": "missing_component",
-        "book": "scratch",
-        "bottle": "foreign_material",
-        "cup": "contamination",
-        "scissors": "bent_pin",
-    }
-    return mapping.get(class_name, "contamination")
 
 
 def annotate_image(
@@ -138,8 +121,7 @@ def annotate_image(
     detections : list[dict]
         Liste de detections issues de run_inference.
     is_demo_mode : bool
-        Si True, les labels affichent les categories de defauts
-        mappees depuis COCO.
+        Non utilise (conserve pour compatibilite API).
 
     Returns
     -------
@@ -154,18 +136,16 @@ def annotate_image(
     for det in detections:
         x1, y1, x2, y2 = det["bbox"]
         conf = det["confidence"]
+        cls_name = det["class_name"]
+        severity = det.get("severity", "minor")
 
-        if is_demo_mode:
-            defect_cat = map_coco_to_defect(det["class_name"])
-            label_text = t_defect(defect_cat)
-        else:
-            label_text = det["class_name"]
-            defect_cat = det["class_name"]
+        label_text = t_defect(cls_name)
+        color = DEFECT_COLORS.get(cls_name, DEFAULT_COLOR)
 
-        color = DEFECT_COLORS.get(defect_cat, DEFAULT_COLOR)
+        # Bordure plus epaisse pour les defauts critiques
+        box_thickness = 3 if severity == "critical" else 2
 
-        # Bounding box
-        cv2.rectangle(annotated, (x1, y1), (x2, y2), color, thickness)
+        cv2.rectangle(annotated, (x1, y1), (x2, y2), color, box_thickness)
 
         # Label background
         label = f"{label_text} {conf:.0%}"
@@ -201,7 +181,7 @@ def format_detections_for_log(
     detections : list[dict]
         Detections brutes.
     is_demo_mode : bool
-        Si True, utilise le mapping COCO vers defauts.
+        Non utilise (conserve pour compatibilite API).
 
     Returns
     -------
@@ -210,16 +190,13 @@ def format_detections_for_log(
     """
     formatted: list[dict] = []
     for det in detections:
-        if is_demo_mode:
-            category = map_coco_to_defect(det["class_name"])
-        else:
-            category = det["class_name"]
-
+        category = det["class_name"]
         formatted.append({
             "category": category,
             "category_display": t_defect(category),
             "confidence": det["confidence"],
             "bbox": det["bbox"],
+            "severity": det.get("severity", "minor"),
             "original_class": det["class_name"],
         })
     return formatted

@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Temporary files
+*.log
+*.tmp
+temp/
+
+# Zone.Identifier files (WSL)
+*.Zone.Identifier
+
+# Claude Code
+CLAUDE.md
+.claude/
+.plugin-config/
