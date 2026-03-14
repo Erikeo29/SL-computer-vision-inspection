@@ -48,7 +48,6 @@ def _list_sample_images() -> list[str]:
     return images
 
 
-@st.fragment
 def render_image_input() -> None:
     """Affiche le composant d'acquisition d'image.
 
