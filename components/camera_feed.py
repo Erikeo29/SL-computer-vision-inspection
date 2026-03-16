@@ -106,11 +106,6 @@ def render_image_input() -> None:
             if selected:
                 pil_img = Image.open(selected)
                 image_bgr = _pil_to_cv2(pil_img)
-                st.image(
-                    pil_img,
-                    caption=os.path.basename(selected),
-                    use_container_width=True,
-                )
         else:
             st.info(t("no_sample_images"))
 

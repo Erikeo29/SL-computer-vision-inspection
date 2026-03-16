@@ -82,32 +82,37 @@ def render_detection_results(
             st.warning(t("defects_found").format(count=nb) + " — " + t("severity_minor"))
         status = "FAIL"
 
-    # Image annotee
+    # Images : original vs annotee cote a cote
     annotated = annotate_image(image_bgr, detections, is_demo_mode)
+    pil_original = _cv2_to_pil(image_bgr)
     pil_annotated = _cv2_to_pil(annotated)
 
-    col_img, col_table = st.columns([1.2, 0.8])
+    col_orig, col_annot = st.columns(2)
 
-    with col_img:
+    with col_orig:
+        st.markdown("**Original**")
+        st.image(pil_original, use_container_width=True)
+
+    with col_annot:
         st.markdown(f"**{t('annotated_image')}**")
         st.image(pil_annotated, use_container_width=True)
 
-    with col_table:
-        st.markdown(f"**{t('detection_table')}**")
-        if formatted:
-            df = pd.DataFrame(
-                [
-                    {
-                        t("class_label"): d["category_display"],
-                        t("confidence"): f"{d['confidence']:.1%}",
-                        t("status"): t("severity_critical") if d.get("severity") == "critical" else t("severity_minor"),
-                    }
-                    for d in formatted
-                ]
-            )
-            st.dataframe(df, use_container_width=True, hide_index=True)
-        else:
-            st.info(t("no_defects"))
+    # Tableau des detections
+    st.markdown(f"**{t('detection_table')}**")
+    if formatted:
+        df = pd.DataFrame(
+            [
+                {
+                    t("class_label"): d["category_display"],
+                    t("confidence"): f"{d['confidence']:.1%}",
+                    t("status"): t("severity_critical") if d.get("severity") == "critical" else t("severity_minor"),
+                }
+                for d in formatted
+            ]
+        )
+        st.dataframe(df, use_container_width=True, hide_index=True)
+    else:
+        st.info(t("no_defects"))
 
     # Metriques rapides
     if detections:
