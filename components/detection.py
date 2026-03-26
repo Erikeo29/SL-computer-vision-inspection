@@ -79,7 +79,7 @@ def render_detection_results(
         if has_critical:
             st.error(t("defects_found").format(count=nb) + " ⚠ " + t("severity_critical"))
         else:
-            st.warning(t("defects_found").format(count=nb) + " — " + t("severity_minor"))
+            st.warning(t("defects_found").format(count=nb) + " - " + t("severity_minor"))
         status = "FAIL"
 
     # Images : original vs annotee cote a cote

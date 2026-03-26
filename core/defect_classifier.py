@@ -1,12 +1,12 @@
 """Post-traitement et classification des detections YOLO.
 
 Classes de defauts PCB (DeepPCB dataset) :
-    0: open            — Circuit ouvert (coupure de piste)
-    1: short           — Court-circuit (pont entre pistes)
-    2: mousebite       — Grignotage (irregularite de bord)
-    3: spur            — Excroissance metallique
-    4: spurious_copper — Cuivre parasite (residu)
-    5: pin_hole        — Trou/void dans le cuivre
+    0: open            - Circuit ouvert (coupure de piste)
+    1: short           - Court-circuit (pont entre pistes)
+    2: mousebite       - Grignotage (irregularite de bord)
+    3: spur            - Excroissance metallique
+    4: spurious_copper - Cuivre parasite (residu)
+    5: pin_hole        - Trou/void dans le cuivre
 """
 from __future__ import annotations
 
