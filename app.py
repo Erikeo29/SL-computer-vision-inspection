@@ -236,7 +236,16 @@ _page_id = getattr(pages, "url_path", pages.title)
 if st.session_state.get("_last_page") != _page_id:
     st.session_state["_last_page"] = _page_id
     components.html(
-        '<script>window.parent.document.querySelector("section.main").scrollTo(0, 0);</script>',
+        (
+            '<script>'
+            'setTimeout(function(){'
+            'var e=window.parent.document;'
+            'var targets=["section.main","[data-testid=stAppViewContainer]",".main"];'
+            'targets.forEach(function(s){var el=e.querySelector(s);if(el)el.scrollTo(0,0);});'
+            'e.scrollingElement.scrollTo(0,0);'
+            '},1);'
+            '</script>'
+        ),
         height=0,
     )
 pages.run()
