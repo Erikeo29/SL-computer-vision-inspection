@@ -230,25 +230,6 @@ pages = st.navigation(
     ]
 )
 
-
-# --- Auto-scroll to top on page change ---
-_page_id = getattr(pages, "url_path", pages.title)
-if st.session_state.get("_last_page") != _page_id:
-    st.session_state["_last_page"] = _page_id
-    components.html(
-        (
-            '<script>'
-            'function scrollTop(){'
-            'var e=window.parent.document;'
-            'var targets=["section.main","[data-testid=stAppViewContainer]",".main"];'
-            'targets.forEach(function(s){var el=e.querySelector(s);if(el)el.scrollTo(0,0);});'
-            'e.scrollingElement.scrollTo(0,0);'
-            '}'
-            'scrollTop();setTimeout(scrollTop,100);setTimeout(scrollTop,300);'
-            '</script>'
-        ),
-        height=0,
-    )
 pages.run()
 
 # --- Ancre de fin de page ---
