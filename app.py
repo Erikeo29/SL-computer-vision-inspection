@@ -238,12 +238,13 @@ if st.session_state.get("_last_page") != _page_id:
     components.html(
         (
             '<script>'
-            'setTimeout(function(){'
+            'function scrollTop(){'
             'var e=window.parent.document;'
             'var targets=["section.main","[data-testid=stAppViewContainer]",".main"];'
             'targets.forEach(function(s){var el=e.querySelector(s);if(el)el.scrollTo(0,0);});'
             'e.scrollingElement.scrollTo(0,0);'
-            '},1);'
+            '}'
+            'scrollTop();setTimeout(scrollTop,100);setTimeout(scrollTop,300);'
             '</script>'
         ),
         height=0,
